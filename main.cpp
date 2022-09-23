@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#define _USE_MATH_DEFINES
 #include <cmath>
-#include <algorithm>
 #include <limits>
 
 bool find(char s) {
@@ -32,26 +32,30 @@ double zaem(double S, double p, double n) {
         }
     }
 }
-void prost(double S, double n, double arr[],double point, double step){
-    arr[0] = zaem(S, point + step, n);
-    arr[1] = zaem(S, point - step, n);
-}
-double binfind(double S, double m, double n, double step, double point, double arr[]) {
-    if (step <= 100){
+double binfind(double S, double m, double n, double start, double end) {
+    double step = (end - start) / 2;
+    double point = step;
+    double ch = zaem(S, point, n);
+    double f = zaem(S, point+step, n);
+    if (step <= 100) {
+        return start;
+    }
+    if (f < ch) {
+        start += step;
+    }
+    else if (f == m) {
+        return point + step;
+    }
+    else if (ch == m) {
         return point;
     }
-    if ((arr[0] < m) and (arr[1] < m)){
-        point += step;
-        prost(S,n,arr,point,step/2);
-
-    } else {
-        point -= step;
-        prost(S,n,arr,point,step/2);
+    else {
+        end -= step;
     }
-    return binfind(S,m,n,step/2,point,arr);
+    return binfind(S, m, n, start, end);
 }
 double ssuda(double S, double m, double n) {
-    if (S < 0 or m < 0 or n < 0 or (S == 0 and m > 0)){
+    if (S < 0 or m < 0 or n < 0 or (S == 0 and m > 0)) {
         return -1;
     }
     if (n == 0) {
@@ -72,11 +76,8 @@ double ssuda(double S, double m, double n) {
             }
         }
         else {
-            double point = (std::numeric_limits<float>::max())/2;
-            double step = (std::numeric_limits<float>::max())/4;
-            double arr[2] = {zaem(S, point + step,n), zaem(S, point - step, n)};
-            double perc = binfind(S,m,n,step,point, arr);
-            double p = ((perc-1000)<0) ? 0 : perc-1000;
+            double perc = binfind(S, m, n, 0, (std::numeric_limits<float>::max()));
+            double p = ((perc - 1000) < 0) ? 0 : perc - 1000;
             while (zaem(S, p, n) < m) {
                 p += 0.01;
             }
@@ -84,6 +85,7 @@ double ssuda(double S, double m, double n) {
         }
     }
 }
+
 void copy() {
     std::wifstream in;
     std::wofstream out;
@@ -132,6 +134,19 @@ bool c(wchar_t a, wchar_t b){
     }
     return towlower(a) < towlower(b);
 }
+std::wstring my_sort(std::wstring s) {
+    wchar_t t;
+    for (int i = 0; i < s.length(); i++) {
+        for (int j = 0; j < s.length()-1; j++) {
+            if (c(s[j], s[j + 1])) {
+                t = s[j];
+                s[j] = s[j + 1];
+                s[j + 1] = t;
+            }
+        }
+    }
+    return s;
+}
 int main() {
     setlocale(LC_ALL, "");
     double S, p, n, m;
@@ -156,7 +171,7 @@ int main() {
 
     std::wstring d;
     std::wcin >> d;
-    std::sort(d.begin(),d.end(), c);
+    d = my_sort(d);
     std::wcout << d;
     return 0;
 }
