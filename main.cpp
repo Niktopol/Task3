@@ -34,17 +34,13 @@ double zaem(double S, double p, double n) {
 }
 double binfind(double S, double m, double n, double start, double end) {
     double step = (end - start) / 2;
-    double point = step;
+    double point = start + step;
     double ch = zaem(S, point, n);
-    double f = zaem(S, point+step, n);
     if (step <= 100) {
         return start;
     }
-    if (f < ch) {
+    if (m > ch) {
         start += step;
-    }
-    else if (f == m) {
-        return point + step;
     }
     else if (ch == m) {
         return point;
@@ -76,7 +72,7 @@ double ssuda(double S, double m, double n) {
             }
         }
         else {
-            double perc = binfind(S, m, n, 0, (std::numeric_limits<float>::max()));
+            double perc = binfind(S, m, n, 0, (std::numeric_limits<double>::max()));
             double p = ((perc - 1000) < 0) ? 0 : perc - 1000;
             while (zaem(S, p, n) < m) {
                 p += 0.01;
@@ -153,6 +149,7 @@ int main() {
 
     std::wcout << L"Введите сумму, процент и число лет" << std::endl;
     std::wcin >> S; std::wcin >> p; std::wcin >> n;
+    std::wcout.precision(10);
     std::wcout << L"m = " << zaem(S, p, n) << std::endl;
 
     std::wcout << L"Введите сумму, размер выплат и число лет" << std::endl;
@@ -164,6 +161,7 @@ int main() {
     else if (h == -2) {
         std::wcout << L"p = Любое число" << std::endl;
     }else{
+        std::wcout.precision(10);
         std::wcout << L"p = " << h << std::endl;
     }
     copy();
