@@ -72,6 +72,7 @@ bool find(wchar_t s) {
     return false;
 }
 double zaem(double S, double p, double n) {
+    n = ceil(n);
     p = p / 100;
     if (S < 0 or p < -1 or n < 0) {
         return -1;
@@ -108,6 +109,7 @@ double binfind(double S, double m, double n, double start, double end) {
     return binfind(S, m, n, start, end);
 }
 double ssuda(double S, double m, double n) {
+    n = ceil(n);
     if (S < 0 or m < 0 or n < 0 or (S == 0 and m > 0)) {
         return -1000;
     }
